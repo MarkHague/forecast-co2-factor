@@ -9,7 +9,7 @@ class ModelConfig:
     horizon: int = 24 * 7
     frequency: str = 'h'
     target: str = "emissionfactor"
-    exo_features: tuple = ("volume_total_renewable", "is_holiday")
+    exo_features: tuple = ("volume_total_renewable", "is_holiday", "temperature_2m")
     eval_metric: str = "mae"
     num_val_windows: int = 2
     path: str | None = None # SAVE path for the trained model
