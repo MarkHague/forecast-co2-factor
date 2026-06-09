@@ -211,20 +211,19 @@ class DataManager:
         openmeteo = openmeteo_requests.Client(session=retry_session)
 
         params = {
-            "latitude": [52.107],  # for De Bilt, where KNMI is
+            "latitude": [52.107],
             "longitude": [5.179],
             "timezone": "UTC",
-            "hourly": ["temperature_2m"]
+            "hourly": ["temperature_2m"],
+            "models": "best_match"
         }
         if mode == 'historical':
             url = "https://archive-api.open-meteo.com/v1/archive"
             params["start_date"] = start_date
             params["end_date"] = end_date
-            params["models"] = "best_match"
 
         elif mode == 'forecast':
             url = "https://api.open-meteo.com/v1/forecast"
-            params["models"] = "knmi_harmonie_arome_netherlands"
         else:
             print(f"mode {mode} is not valid. Only 'historical' or 'forecast' accepted.")
             return
