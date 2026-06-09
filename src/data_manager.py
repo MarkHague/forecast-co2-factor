@@ -182,13 +182,15 @@ class DataManager:
         # compute total renewable volume, drop individual sources
         df["volume_total_renewable"] = df["volume_solar"] + df["volume_onshore_wind"] + df["volume_offshore_wind"]
         df.drop(["volume_solar", "volume_onshore_wind", "volume_offshore_wind"], axis=1, inplace=True)
-        df["fraction_renewable"] = df["volume_total_renewable"] / df["volume_total"]
+        if mode == 'historical':
+            df["fraction_renewable"] = df["volume_total_renewable"] / df["volume_total"]
 
         # add temperature data
         df_temp = DataManager.get_temperature(mode = mode,
                                               start_date = start_date,
                                               end_date = end_date)
-        # the OpenMeteo API has more up-to-date date, so we always keep all the NED data
+        # the OpenMeteo API has more up-to-date data, and should always cover the whole NED data date range
+        # so we always keep all the NED data
         df = df.merge(df_temp, left_index = True, right_on = 'date', how = 'inner')
 
         return df
@@ -215,12 +217,13 @@ class DataManager:
             "longitude": [5.179],
             "timezone": "UTC",
             "hourly": ["temperature_2m"],
-            "models": "best_match"
+            "models": "best_match",
+            "start_date": start_date,
+            "end_date": end_date
         }
         if mode == 'historical':
             url = "https://archive-api.open-meteo.com/v1/archive"
-            params["start_date"] = start_date
-            params["end_date"] = end_date
+
 
         elif mode == 'forecast':
             url = "https://api.open-meteo.com/v1/forecast"
