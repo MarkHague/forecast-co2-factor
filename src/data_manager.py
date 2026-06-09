@@ -193,7 +193,7 @@ class DataManager:
         # so we always keep all the NED data
         df = df.merge(df_temp, left_index = True, right_on = 'date', how = 'inner')
 
-        return df
+        return df.set_index("date").rename_axis("ds")
 
     @staticmethod
     def get_temperature(mode: str = 'historical',
