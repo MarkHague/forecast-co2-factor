@@ -2,6 +2,7 @@ from src.data_manager import DataManager
 from src.model_trainer import ModelTrainer, ModelConfig
 from src.utils import slice_last_n_weeks, convert_to_ag_df
 import tempfile
+import json
 import pandas as pd
 from pathlib import Path
 
@@ -40,6 +41,9 @@ train_df_opt = convert_to_ag_df(train_df_opt)
 config = ModelConfig(path='artifacts/models/direct')
 trainer = ModelTrainer(config)
 predictor = trainer.fit_predictor(train_df = train_df_opt)
+
+with open(Path(config.path) / "train_config.json", "w") as f:
+    json.dump({"best_train_window": best_train_window}, f)
 
 # save the train and test data
 train_df_opt.to_csv(SAVE_DATA_PATH / "train_direct.csv")

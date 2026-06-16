@@ -2,6 +2,7 @@ from src.data_manager import DataManager
 from src.model_trainer import ModelTrainer, ModelConfig
 from src.utils import slice_last_n_weeks, convert_to_ag_df
 import tempfile
+import json
 import pandas as pd
 from pathlib import Path
 
@@ -38,6 +39,9 @@ train_df_opt = convert_to_ag_df(train_df_opt)
 config = ModelConfig(path='artifacts/models/indirect', target = "volume_total")
 trainer = ModelTrainer(config)
 predictor = trainer.fit_predictor(train_df = train_df_opt)
+
+with open(Path(config.path) / "train_config.json", "w") as f:
+    json.dump({"best_train_window": best_train_window}, f)
 
 # ---------------------- MODEL 2 - PREDICT EMISSION FACTOR ------------------ #
 # use a simple OLS, since CO2 factor should linearly depend on fraction of renewables
