@@ -246,3 +246,34 @@ class DataManager:
         hourly_data["temperature_2m"] = hourly_temperature_2m
 
         return pd.DataFrame(data = hourly_data)
+
+    def prepare_train_test_df(self, n_weeks: int = None) -> tuple[pd.DataFrame, pd.DataFrame]:
+        """
+        A wrapper function that generates the final training and test dataframes.
+        Performs the following steps:
+            1. Retrieves the most recent data n_weeks of data.
+            2. Adds exogenous features
+            3. Performs the train/test split
+
+        Args:
+            n_weeks: Length of retrieved data in number of weeks into the past.
+                     The final week is used as test data.
+
+        """
+        df = self.get_last_n_weeks(n_weeks=n_weeks)
+        # add extra day to account for API differences in start/ end date interpretation
+        end_date = pd.Timestamp.now(tz='UTC')
+        start_date = pd.Timestamp.now(tz='UTC') - pd.Timedelta(weeks=n_weeks) - pd.Timedelta(days=1)
+
+        # Add exogenous features such as holiday, temperature etc.
+        df = self.add_exo_features(df=df, mode='historical',
+                                           start_date=start_date.strftime('%Y-%m-%d'),
+                                           end_date=end_date.strftime('%Y-%m-%d'))
+
+        # use the last week of data as final test data
+        start_test_date = str(pd.Timestamp.now(tz='UTC') - pd.Timedelta(weeks=1))
+
+        train_df, test_df = self.train_test_split(df=df, train_test_split_date=start_test_date,
+                                                          test_end_date=str(pd.Timestamp.now(tz='UTC')))
+
+        return train_df, test_df

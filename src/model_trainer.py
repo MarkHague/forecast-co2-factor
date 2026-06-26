@@ -95,21 +95,7 @@ class ModelTrainer:
         save_path.mkdir(parents=True, exist_ok=True)
 
         data_manager = DataManager()
-        df = data_manager.get_last_n_weeks(n_weeks=n_weeks)
-        # add extra day to account for API differences in start/ end date interpretation
-        end_date = pd.Timestamp.now(tz='UTC')
-        start_date = pd.Timestamp.now(tz='UTC') - pd.Timedelta(weeks=n_weeks) - pd.Timedelta(days=1)
-
-        # Add exogenous features such as holiday, temperature etc.
-        df = data_manager.add_exo_features(df=df, mode='historical',
-                                           start_date=start_date.strftime('%Y-%m-%d'),
-                                           end_date=end_date.strftime('%Y-%m-%d'))
-
-        # use the last week of data as final test data
-        start_test_date = str(pd.Timestamp.now(tz='UTC') - pd.Timedelta(weeks=1))
-
-        train_df, test_df = data_manager.train_test_split(df=df, train_test_split_date=start_test_date,
-                                                          test_end_date=str(pd.Timestamp.now(tz='UTC')))
+        train_df, test_df = data_manager.prepare_train_test_df(n_weeks=n_weeks)
 
         if best_train_window is None:
             with tempfile.TemporaryDirectory() as tmp:
