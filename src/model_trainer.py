@@ -77,7 +77,7 @@ class ModelTrainer:
         return int( max(results, key=results.get)[5:] )
 
     def train_direct_model(self, n_weeks: int = None, window_weeks: list[int] = None,
-                           save_data_path:str = None, save_model_path:str = None,
+                           save_data_path: str = None,
                            best_train_window: int = None) -> None:
         """
         Trains the direct model. Saves the train/test dataset to save_data_path.
@@ -85,15 +85,14 @@ class ModelTrainer:
         Args:
             n_weeks: Length of retrieved training data in number of weeks into the past.
             window_weeks: List of potential dataset lengths in weeks, used to find the optimal training window.
-                          Only required if "best_train_window" is None.
+                          Only required if "best_train_window" is None. max(window_weeks) must be less than or equal to n_weeks.
             best_train_window: Sets the optimal training window (skips searching through "window_weeks" list).
             save_data_path: Path to save the train and test data (validation data is handled in the ModelConfig).
-            save_model_path: Path to save the model artifacts.
 
         """
 
-        SAVE_DATA_PATH = Path(save_data_path)
-        SAVE_DATA_PATH.mkdir(parents=True, exist_ok=True)
+        save_path = Path(save_data_path)
+        save_path.mkdir(parents=True, exist_ok=True)
 
         data_manager = DataManager()
         df = data_manager.get_last_n_weeks(n_weeks=n_weeks)
@@ -123,13 +122,11 @@ class ModelTrainer:
         train_df_opt = slice_last_n_weeks(df=train_df, n_weeks=best_train_window)
         train_df_opt = convert_to_ag_df(train_df_opt)
 
-        config = ModelConfig(path=save_model_path)
-        trainer = ModelTrainer(config)
-        predictor = trainer.fit_predictor(train_df=train_df_opt)
+        predictor = self.fit_predictor(train_df=train_df_opt)
 
-        with open(Path(config.path) / "train_config.json", "w") as f:
+        with open(Path(self.config.path) / "train_config.json", "w") as f:
             json.dump({"best_train_window": best_train_window}, f)
 
         # save the train and test data
-        train_df_opt.to_csv(SAVE_DATA_PATH / "train_direct.csv")
-        test_df.to_csv(SAVE_DATA_PATH / "test_direct.csv")
+        train_df_opt.to_csv(save_path / "train_direct.csv")
+        test_df.to_csv(save_path / "test_direct.csv")
