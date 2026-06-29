@@ -3,7 +3,7 @@ import pytest
 from src.utils import slice_last_n_weeks
 
 
-def test_slice_last_n_weeks_full_coverage():
+def test_slice_last_n_weeks():
     # 4 weeks of hourly data (4 * 7 * 24 = 672 rows), n_weeks=4 should return all rows
     dates = pd.date_range(start="2024-01-01", periods=4 * 7 * 24, freq="h")
     df = pd.DataFrame({"ds": dates, "value": range(len(dates))})

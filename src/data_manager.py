@@ -39,8 +39,8 @@ class DataManager:
         Retrieves hourly production data from the NED API.
 
         Args:
-            start_date: start date of requested time series
-            end_date: end date of requested time series
+            start_date: start date of requested time series in DD-MM-YYYY
+            end_date: end date of requested time series in DD-MM-YYYY
             energy_type: energy source. Currently supported are "total", "solar", "onshore_wind", and "offshore_wind"
             mode:"historical" or "forecast"
         """
@@ -120,7 +120,7 @@ class DataManager:
         return df
 
     def get_last_n_weeks(self, n_weeks: int = None,
-                        sources: tuple[str] = ("total", "solar", "offshore_wind", "onshore_wind") ) -> pd.DataFrame:
+                        sources: tuple[str, ...] = ("total", "solar", "offshore_wind", "onshore_wind") ) -> pd.DataFrame:
         """
         Get historical NED data for all required energy sources, from N weeks ago to today.
 
@@ -138,7 +138,7 @@ class DataManager:
         return pd.concat(dfs, axis=1)
 
     def get_forecast_data(self,
-                          sources: tuple[str] = ("solar", "offshore_wind", "onshore_wind") ) -> pd.DataFrame:
+                          sources: tuple[str, ...] = ("solar", "offshore_wind", "onshore_wind") ) -> pd.DataFrame:
         """
         Retrieves NED production forecast data.
         """
