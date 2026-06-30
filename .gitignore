@@ -1,0 +1,21 @@
+# macOS
+.DS_Store
+
+# Environment
+.env
+.python-version
+
+# Virtual env & cache
+.venv/
+__pycache__/
+.cache.sqlite
+.pytest_cache/
+
+# IDE
+.idea/
+
+# Notebooks
+notebooks/
+
+# Artifacts (models, data, predictions)
+artifacts/
