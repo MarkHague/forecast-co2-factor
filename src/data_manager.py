@@ -247,7 +247,7 @@ class DataManager:
 
         return pd.DataFrame(data = hourly_data)
 
-    def prepare_train_test_df(self, n_weeks: int = None) -> tuple[pd.DataFrame, pd.DataFrame]:
+    def prepare_train_test_df(self, n_weeks: int = None, n_test_weeks: int = 1) -> tuple[pd.DataFrame, pd.DataFrame]:
         """
         A wrapper function that generates the final training and test dataframes.
         Performs the following steps:
@@ -258,6 +258,7 @@ class DataManager:
         Args:
             n_weeks: Length of retrieved data in number of weeks into the past.
                      The final week is used as test data.
+            n_test_weeks: Length of the test data in number of weeks.
 
         """
         df = self.get_last_n_weeks(n_weeks=n_weeks)
@@ -271,7 +272,7 @@ class DataManager:
                                            end_date=end_date.strftime('%Y-%m-%d'))
 
         # use the last week of data as final test data
-        start_test_date = str(pd.Timestamp.now(tz='UTC') - pd.Timedelta(weeks=1))
+        start_test_date = str(pd.Timestamp.now(tz='UTC') - pd.Timedelta(weeks=n_test_weeks))
 
         train_df, test_df = self.train_test_split(df=df, train_test_split_date=start_test_date,
                                                           test_end_date=str(pd.Timestamp.now(tz='UTC')))
