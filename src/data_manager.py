@@ -36,7 +36,7 @@ class DataManager:
                                 energy_type: str = "solar",
                                 mode: str = "historical") -> pd.DataFrame:
         """
-        Retrieves hourly production data from the NED API.
+        Retrieves hourly energy production data from the NED API.
 
         Args:
             start_date: start date of requested time series in DD-MM-YYYY
@@ -82,7 +82,7 @@ class DataManager:
 
     def train_test_split(self, df: pd.DataFrame = None,
                              train_test_split_date:str = None,
-                             test_end_date: str = None) -> (pd.DataFrame, pd.DataFrame):
+                             test_end_date: str = None) -> tuple[pd.DataFrame, pd.DataFrame]:
         """
         Split train and test sets. Data must be indexed with a valid datetime series.
         Note that validation data is included in the training data.
